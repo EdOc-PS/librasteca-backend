@@ -93,6 +93,14 @@ export class SignController {
     return { success: true, message: 'Sinais obtidos com sucesso', object: signs };
   }
 
+  // GET /sign/recent — últimos sinais cadastrados na plataforma (visíveis ao usuário)
+  @Roles(Role.EDUCATOR, Role.MANAGER)
+  @Get('recent')
+  async findRecent(@Request() req: AuthenticatedRequest) {
+    const signs = await this.signService.findRecent(req.user.userId, req.user.roles);
+    return { success: true, message: 'Sinais recentes obtidos com sucesso', object: signs };
+  }
+
   @Roles(Role.EDUCATOR, Role.MANAGER)
   @Get('promotions')
   async findPendingPromotions() {
@@ -157,11 +165,12 @@ export class SignController {
     @Param('id') id: string,
     @Body() dto: UpdateSignDto,
     @UploadedFiles() files: SignUploads,
+    @Request() req: AuthenticatedRequest,
   ) {
     const sign = await this.signService.update(id, dto, {
       video: files?.video?.[0],
       image: files?.image?.[0],
-    });
+    }, req.user.userId, req.user.roles);
     return { success: true, message: 'Sinal atualizado com sucesso', object: sign };
   }
 
@@ -169,8 +178,8 @@ export class SignController {
   @DeleteSignDocs()
   @Roles(Role.EDUCATOR, Role.MANAGER)
   @Delete(':id')
-  async delete(@Param('id') id: string) {
-    await this.signService.delete(id);
+  async delete(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
+    await this.signService.delete(id, req.user.userId, req.user.roles);
     return { success: true, message: 'Sinal excluído com sucesso' };
   }
 }

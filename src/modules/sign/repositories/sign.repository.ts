@@ -206,6 +206,32 @@ export class SignRepository {
     });
   }
 
+  // Últimos sinais que o usuário pode ver: públicos, dele ou das turmas de que
+  // participa. O gestor vê todos.
+  async findRecent(userId: string, isManager: boolean, take = 8) {
+    return this.prisma.sign.findMany({
+      where: isManager ? {} : {
+        OR: [
+          { globalStatus: GlobalStatus.PUBLIC },
+          { creatorId: userId },
+          { classrooms: { some: { OR: [{ teacherId: userId }, { enrollments: { some: { userId } } }] } } },
+        ],
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        videoUrl: true,
+        anotherUrl: true,
+        imgUrl: true,
+        createdAt: true,
+        category: { select: { id: true, name: true, value: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+      take,
+    });
+  }
+
   async findPendingPromotions() {
     return this.prisma.sign.findMany({
       where: { globalStatus: GlobalStatus.PENDING },

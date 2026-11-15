@@ -10,6 +10,13 @@ import { SignService } from './sign.service';
 export class GlossaryController {
   constructor(private readonly signService: SignService) {}
 
+  // GET /glossary/stats — quantidade de sinais cadastrados (público, usado na landing)
+  @Get('stats')
+  async findStats() {
+    const stats = await this.signService.findPublicStats();
+    return { success: true, message: 'Estatísticas obtidas com sucesso', object: stats };
+  }
+
   // GET /glossary/filters — categorias, configurações de mão e disciplinas (público)
   @Get('filters')
   async findFilters() {

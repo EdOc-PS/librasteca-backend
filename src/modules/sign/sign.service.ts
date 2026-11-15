@@ -153,9 +153,10 @@ export class SignService {
     return sign;
   }
 
-  async update(id: string, dto: UpdateSignDto, files: SignFiles) {
+  async update(id: string, dto: UpdateSignDto, files: SignFiles, userId: string, roles: Role[]) {
     const sign = await this.signRepository.findById(id);
     if (!sign) throw new NotFoundException('Sinal não encontrado.');
+    await this.assertCanManageSign(sign, userId, roles);
 
     // Se mudou handConfigId, valida existência
     if (dto.handConfigId && dto.handConfigId !== sign.handConfigId) {
@@ -228,9 +229,10 @@ export class SignService {
     };
   }
 
-  async delete(id: string) {
+  async delete(id: string, userId: string, roles: Role[]) {
     const sign = await this.signRepository.findById(id);
     if (!sign) throw new NotFoundException('Sinal não encontrado.');
+    await this.assertCanManageSign(sign, userId, roles);
 
     // Remove arquivos do R2
     if (sign.videoUrl) await this.r2Service.delete(sign.videoUrl);
@@ -307,9 +309,36 @@ export class SignService {
     return this.signRepository.findByCreator(creatorId);
   }
 
+  async findRecent(userId: string, roles: Role[]) {
+    return this.signRepository.findRecent(userId, roles.includes(Role.MANAGER));
+  }
+
+  // Editar/excluir: criador do sinal, dono ou administrador de uma turma em
+  // que o sinal está, ou gestor
+  private async assertCanManageSign(sign: { creatorId: string; id: string }, userId: string, roles: Role[]) {
+    if (roles.includes(Role.MANAGER) || sign.creatorId === userId) return;
+    const managed = await this.prisma.classroom.count({
+      where: {
+        signs: { some: { id: sign.id } },
+        OR: [{ teacherId: userId }, { enrollments: { some: { userId, isAdmin: true } } }],
+      },
+    });
+    if (!managed) throw new ForbiddenException('Você não pode alterar um sinal de outro educador.');
+  }
+
   // Promoções pendentes (área de trabalho do gestor)
   async findPendingPromotions() {
     return this.signRepository.findPendingPromotions();
+  }
+
+  // Números públicos da plataforma, exibidos na landing page.
+  async findPublicStats() {
+    const [signs, publicSigns, handConfigs] = await Promise.all([
+      this.prisma.sign.count(),
+      this.prisma.sign.count({ where: { globalStatus: 'PUBLIC' } }),
+      this.prisma.handConfig.count(),
+    ]);
+    return { signs, publicSigns, handConfigs };
   }
 
   // Filtros do glossário público — categorias, configurações de mão e turmas.
