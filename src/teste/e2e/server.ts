@@ -12,8 +12,16 @@ import { ThrottlerGuard } from '@nestjs/throttler';
 import { AppModule } from '@/app.module';
 import { HttpExceptionFilter } from '@common/filters/exception.filter';
 import { MulterExceptionFilter } from '@common/filters/multer-exception.filter';
+import { R2Service } from '@modules/r2/r2.service';
 
 ThrottlerGuard.prototype.canActivate = async () => true;
+
+// Uploads não vão para o Cloudflare R2 de verdade
+let fakeUploads = 0;
+R2Service.prototype.uploadImage = async (_file, folder) => `https://r2.teste/${folder}/img-${++fakeUploads}.png`;
+R2Service.prototype.uploadVideo = async (_file, folder) => `https://r2.teste/${folder}/video-${++fakeUploads}.mp4`;
+R2Service.prototype.uploadDocument = async (_file, folder) => `https://r2.teste/${folder}/doc-${++fakeUploads}.pdf`;
+R2Service.prototype.delete = async () => undefined;
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { logger: ['error', 'warn'] });
