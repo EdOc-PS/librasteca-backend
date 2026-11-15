@@ -333,12 +333,11 @@ export class SignService {
 
   // Números públicos da plataforma, exibidos na landing page.
   async findPublicStats() {
-    const [signs, publicSigns, handConfigs] = await Promise.all([
+    const [signs, publicSigns] = await Promise.all([
       this.prisma.sign.count(),
       this.prisma.sign.count({ where: { globalStatus: 'PUBLIC' } }),
-      this.prisma.handConfig.count(),
     ]);
-    return { signs, publicSigns, handConfigs };
+    return { signs, publicSigns };
   }
 
   // Filtros do glossário público — categorias, configurações de mão e turmas.
