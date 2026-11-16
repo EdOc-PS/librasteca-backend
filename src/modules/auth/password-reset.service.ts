@@ -53,7 +53,7 @@ export class PasswordResetService {
     });
 
     try {
-      await this.emailService.send({ to: user.email, subject: 'Redefinir sua senha — Sinaliza', html, text });
+      await this.emailService.send({ to: user.email, subject: 'Redefinir sua senha — Libraoteca', html, text });
     } catch (err) {
       // Não vaza a falha para o cliente (mesma resposta de sempre); fica no log
       this.logger.error(`Não foi possível enviar o email de recuperação para ${user.email}`, err as Error);

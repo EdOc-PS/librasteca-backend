@@ -163,7 +163,7 @@ export class NotificationService {
           title: 'Nova conta aguardando análise',
           preheader: `${studentName} se cadastrou e aguarda aprovação.`,
           paragraphs: [
-            `${studentName} criou uma conta de aluno no Sinaliza e está aguardando a sua análise.`,
+            `${studentName} criou uma conta de aluno na Libraoteca e está aguardando a sua análise.`,
             'Enquanto a conta não for aprovada, o aluno não consegue acessar as turmas.',
           ],
           button: { label: 'Analisar cadastros', url: `${this.frontendUrl}/members` },
@@ -177,10 +177,10 @@ export class NotificationService {
     await this.send({ id, name, email }, {
       tone: 'success',
       badge: 'Conta criada',
-      title: 'Bem-vindo(a) ao Sinaliza!',
-      preheader: 'Um gestor criou sua conta de educador no Sinaliza.',
+      title: 'Bem-vindo(a) à Libraoteca!',
+      preheader: 'Um gestor criou sua conta de educador na Libraoteca.',
       paragraphs: [
-        `Um gestor da instituição criou sua conta de educador no Sinaliza com o email ${email}.`,
+        `Um gestor da instituição criou sua conta de educador na Libraoteca com o email ${email}.`,
         'Use a senha informada pelo gestor para entrar na plataforma.',
       ],
       button: { label: 'Abrir minhas turmas', url: `${this.frontendUrl}/classrooms` },
@@ -196,7 +196,7 @@ export class NotificationService {
           tone: 'success',
           badge: 'Conta aprovada',
           title: 'Sua conta foi aprovada!',
-          preheader: 'Você já pode acessar o Sinaliza.',
+          preheader: 'Você já pode acessar a Libraoteca.',
           paragraphs: ['Um gestor aprovou o seu cadastro. Suas turmas já estão disponíveis.'],
           button: { label: 'Abrir minhas turmas', url: `${this.frontendUrl}/classrooms` },
         }

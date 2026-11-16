@@ -45,7 +45,7 @@ async function bootstrap() {
 
   // Configuração do Swagger
   const config = new DocumentBuilder()
-    .setTitle('Sinaliza — API')
+    .setTitle('Libraoteca — API')
     .setDescription(
       'API do repositório digital de sinais de Libras.\n\n' +
       '**Roles disponíveis:** `STUDENT` · `EDUCATOR` · `MANAGER`\n\n' +
