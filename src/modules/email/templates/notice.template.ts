@@ -1,4 +1,4 @@
-// Template genérico dos avisos da Libraoteca — mesmo layout dos emails de conta
+// Template genérico dos avisos da Librasteca — mesmo layout dos emails de conta
 // (tabelas + estilos inline). Os textos chegam prontos; aqui só se escapa e monta.
 
 export type NoticeTone = 'success' | 'danger' | 'info';
@@ -64,7 +64,7 @@ export function noticeTemplate(data: NoticeTemplateData) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${escapeHtml(title)} — Libraoteca</title>
+<title>${escapeHtml(title)} — Librasteca</title>
 </head>
 <body style="margin:0;padding:0;background:#F5F9FC;font-family:'Segoe UI',Helvetica,Arial,sans-serif;color:#213547;">
   <span style="display:none;max-height:0;overflow:hidden;opacity:0;">${escapeHtml(preheader)}</span>
@@ -74,8 +74,8 @@ export function noticeTemplate(data: NoticeTemplateData) {
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
           <tr>
             <td align="center" style="padding-bottom:20px;">
-              <img src="${escapeHtml(logoUrl)}" width="44" height="44" alt="Libraoteca" style="display:inline-block;vertical-align:middle;border:0;">
-              <span style="display:inline-block;vertical-align:middle;margin-left:8px;font-family:Georgia,'Libre Baskerville',serif;font-size:24px;font-weight:bold;color:#213547;">Libraoteca</span>
+              <img src="${escapeHtml(logoUrl)}" width="44" height="44" alt="Librasteca" style="display:inline-block;vertical-align:middle;border:0;">
+              <span style="display:inline-block;vertical-align:middle;margin-left:8px;font-family:Georgia,'Libre Baskerville',serif;font-size:24px;font-weight:bold;color:#213547;">Librasteca</span>
             </td>
           </tr>
           <tr>
@@ -92,7 +92,7 @@ export function noticeTemplate(data: NoticeTemplateData) {
           </tr>
           <tr>
             <td align="center" style="padding-top:20px;font-size:12px;line-height:1.5;color:#95A6BD;">
-              Libraoteca · Repositório colaborativo de sinais em Libras<br>IFMG — Campus Ouro Branco
+              Librasteca · Repositório colaborativo de sinais em Libras<br>IFMG — Campus Ouro Branco
             </td>
           </tr>
         </table>
@@ -110,5 +110,5 @@ export function noticeTemplate(data: NoticeTemplateData) {
     ...(button ? [`${button.label}: ${button.url}`] : []),
   ].join('\n\n');
 
-  return { html, text, subject: `${title} — Libraoteca` };
+  return { html, text, subject: `${title} — Librasteca` };
 }

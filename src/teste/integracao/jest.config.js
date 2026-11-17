@@ -1,5 +1,5 @@
 // Testes de integração (Bottom-up) do back, no banco local de testes.
-// Rodar a partir de sinaliza-backend (com o container sinaliza-postgres-teste no ar):
+// Rodar a partir de librasteca-backend (com o container sinaliza-postgres-teste no ar):
 //   npx jest --config src/teste/integracao/jest.config.js --runInBand
 const base = require('../jest.config.js');
 

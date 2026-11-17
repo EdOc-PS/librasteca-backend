@@ -23,18 +23,18 @@ export function resetPasswordTemplate({ name, resetUrl, logoUrl, expiresInMinute
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Redefinir senha — Libraoteca</title>
+<title>Redefinir senha — Librasteca</title>
 </head>
 <body style="margin:0;padding:0;background:#F5F9FC;font-family:'Segoe UI',Helvetica,Arial,sans-serif;color:#213547;">
-  <span style="display:none;max-height:0;overflow:hidden;opacity:0;">Recebemos um pedido para redefinir sua senha na Libraoteca.</span>
+  <span style="display:none;max-height:0;overflow:hidden;opacity:0;">Recebemos um pedido para redefinir sua senha na Librasteca.</span>
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F5F9FC;padding:32px 16px;">
     <tr>
       <td align="center">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
           <tr>
             <td align="center" style="padding-bottom:20px;">
-              <img src="${escapeHtml(logoUrl)}" width="44" height="44" alt="Libraoteca" style="display:inline-block;vertical-align:middle;border:0;">
-              <span style="display:inline-block;vertical-align:middle;margin-left:8px;font-family:Georgia,'Libre Baskerville',serif;font-size:24px;font-weight:bold;color:#213547;">Libraoteca</span>
+              <img src="${escapeHtml(logoUrl)}" width="44" height="44" alt="Librasteca" style="display:inline-block;vertical-align:middle;border:0;">
+              <span style="display:inline-block;vertical-align:middle;margin-left:8px;font-family:Georgia,'Libre Baskerville',serif;font-size:24px;font-weight:bold;color:#213547;">Librasteca</span>
             </td>
           </tr>
           <tr>
@@ -68,7 +68,7 @@ export function resetPasswordTemplate({ name, resetUrl, logoUrl, expiresInMinute
           </tr>
           <tr>
             <td align="center" style="padding-top:20px;font-size:12px;line-height:1.5;color:#95A6BD;">
-              Libraoteca · Repositório colaborativo de sinais em Libras<br>IFMG — Campus Ouro Branco
+              Librasteca · Repositório colaborativo de sinais em Libras<br>IFMG — Campus Ouro Branco
             </td>
           </tr>
         </table>
@@ -80,7 +80,7 @@ export function resetPasswordTemplate({ name, resetUrl, logoUrl, expiresInMinute
 
   const text = `Olá, ${name.split(' ')[0] ?? name}!
 
-Recebemos um pedido para redefinir a senha da sua conta na Libraoteca.
+Recebemos um pedido para redefinir a senha da sua conta na Librasteca.
 Acesse o link abaixo para criar uma nova senha (válido por ${expiresInMinutes} minutos):
 
 ${resetUrl}

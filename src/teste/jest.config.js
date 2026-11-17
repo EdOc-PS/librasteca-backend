@@ -1,4 +1,4 @@
-// Testes unitários do back. Rodar a partir de sinaliza-backend:
+// Testes unitários do back. Rodar a partir de librasteca-backend:
 //   npx jest --config src/teste/jest.config.js
 const path = require('path');
 

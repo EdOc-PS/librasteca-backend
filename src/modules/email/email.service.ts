@@ -17,7 +17,7 @@ export class EmailService {
 
   constructor(config: ConfigService) {
     const apiKey = config.get<string>('RESEND_API_KEY');
-    this.from = config.get<string>('EMAIL_FROM') ?? 'Libraoteca <onboarding@resend.dev>';
+    this.from = config.get<string>('EMAIL_FROM') ?? 'Librasteca <onboarding@resend.dev>';
     // Sem chave (ex: dev local) o envio vira só log, em vez de derrubar o boot
     this.resend = apiKey ? new Resend(apiKey) : null;
     if (!apiKey) this.logger.warn('RESEND_API_KEY não definido — emails não serão enviados.');
