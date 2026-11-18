@@ -48,12 +48,7 @@ export class SignService {
       );
     }
 
-    const handConfigExists = await this.prisma.handConfig.findUnique({
-      where: { id: dto.handConfigId },
-    });
-    if (!handConfigExists) {
-      throw new BadRequestException('Configuração de mão não encontrada.');
-    }
+    await this.assertHandConfigsExist(dto.handConfigIds);
 
     const categoryExists = await this.prisma.category.findUnique({
       where: { id: dto.categoryId },
@@ -90,7 +85,7 @@ export class SignService {
       name: dto.name,
       slug,
       categoryId: dto.categoryId,
-      handConfigId: dto.handConfigId,
+      handConfigIds: dto.handConfigIds,
       creatorId,
       classroomIds: dto.classroomIds ?? [],
       videoUrl,
@@ -114,6 +109,16 @@ export class SignService {
       slug = `${base}-${suffix++}`;
     }
     return slug;
+  }
+
+  // Garante que todas as configurações de mão informadas existem
+  private async assertHandConfigsExist(handConfigIds?: string[]) {
+    if (!handConfigIds || handConfigIds.length === 0) return;
+    const unique = [...new Set(handConfigIds)];
+    const count = await this.prisma.handConfig.count({ where: { id: { in: unique } } });
+    if (count !== unique.length) {
+      throw new BadRequestException('Uma ou mais configurações de mão não foram encontradas.');
+    }
   }
 
   // Garante que todas as turmas informadas existem
@@ -158,15 +163,7 @@ export class SignService {
     if (!sign) throw new NotFoundException('Sinal não encontrado.');
     await this.assertCanManageSign(sign, userId, roles);
 
-    // Se mudou handConfigId, valida existência
-    if (dto.handConfigId && dto.handConfigId !== sign.handConfigId) {
-      const handConfigExists = await this.prisma.handConfig.findUnique({
-        where: { id: dto.handConfigId },
-      });
-      if (!handConfigExists) {
-        throw new BadRequestException('Configuração de mão não encontrada.');
-      }
-    }
+    await this.assertHandConfigsExist(dto.handConfigIds);
 
     // Se mudou a categoria, valida existência
     if (dto.categoryId && dto.categoryId !== sign.categoryId) {
@@ -202,7 +199,7 @@ export class SignService {
     return this.signRepository.update(id, {
       name: dto.name,
       categoryId: dto.categoryId,
-      handConfigId: dto.handConfigId,
+      handConfigIds: dto.handConfigIds,
       classroomIds: dto.classroomIds,
       videoUrl,
       anotherUrl: dto.anotherUrl,

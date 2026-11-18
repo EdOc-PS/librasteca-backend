@@ -251,7 +251,7 @@ model HandConfig {
   updatedAt DateTime @updatedAt
 
   institution Institution? @relation(fields: [institutionId], references: [id])
-  signs       Sign[]
+  signs       Sign[]        @relation("SignHandConfigs")
 
   @@index([institutionId])
 }
@@ -299,7 +299,6 @@ model Sign {
   // slug quebraria links já compartilhados. Usado na URL em vez do id.
   slug                String  @unique
   categoryId          String
-  handConfigId        String
   videoUrl            String? // URL do vídeo upado no R2
   anotherUrl          String? // URL alternativa (ex: YouTube)
   imgUrl              String? // Imagem ilustrativa (opcional)
@@ -318,7 +317,8 @@ model Sign {
   updatedAt DateTime @updatedAt
 
   category   Category    @relation(fields: [categoryId], references: [id])
-  handConfig HandConfig  @relation(fields: [handConfigId], references: [id])
+  // Um sinal é uma combinação de uma ou mais configurações de mão (many-to-many)
+  handConfigs HandConfig[] @relation("SignHandConfigs")
   // Um sinal pode pertencer a várias turmas (many-to-many)
   classrooms Classroom[] @relation("ClassroomSigns")
   // Disciplinas do glossário global às quais o sinal foi associado ao ser promovido
@@ -328,7 +328,6 @@ model Sign {
   history     History[]
   accesses    SignAccess[]
 
-  @@index([handConfigId])
   @@index([creatorId])
   @@index([categoryId])
   @@index([institutionId])

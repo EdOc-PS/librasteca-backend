@@ -27,7 +27,7 @@ export async function montarCenario(prisma: PrismaService, sufixo: string) {
     ],
   });
 
-  const base = { categoryId: category.id, handConfigId: handConfig.id, anotherUrl: 'https://youtu.be/dQw4w9WgXcQ' };
+  const base = { categoryId: category.id, handConfigs: { connect: { id: handConfig.id } }, anotherUrl: 'https://youtu.be/dQw4w9WgXcQ' };
   const privado = await prisma.sign.create({
     data: { ...base, name: `Privado ${sufixo}`, slug: `privado-${sufixo}`, creatorId: professor.id, classrooms: { connect: { id: turma.id } } },
   });

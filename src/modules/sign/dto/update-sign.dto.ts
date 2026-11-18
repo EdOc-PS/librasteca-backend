@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsUUID, IsOptional, IsUrl, IsArray } from 'class-validator';
+import { IsString, IsNotEmpty, IsUUID, IsOptional, IsUrl, IsArray, ArrayMinSize } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -14,10 +14,19 @@ export class UpdateSignDto {
   @IsUUID()
   categoryId?: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ isArray: true, type: String, description: 'Configurações de mão (substitui o conjunto atual)' })
   @IsOptional()
-  @IsUUID()
-  handConfigId?: string;
+  @IsArray()
+  @ArrayMinSize(1, { message: 'Selecione ao menos uma configuração de mão.' })
+  @IsUUID('4', { each: true })
+  @Transform(({ value }) => {
+    if (Array.isArray(value)) return value.filter(Boolean);
+    if (typeof value === 'string') {
+      return value.split(',').map((v: string) => v.trim()).filter(Boolean);
+    }
+    return [];
+  })
+  handConfigIds?: string[];
 
   @ApiPropertyOptional({ isArray: true, type: String, description: 'Turmas do sinal (substitui o conjunto atual)' })
   @IsOptional()

@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsUUID, IsOptional, IsUrl, IsArray } from 'class-validator';
+import { IsString, IsNotEmpty, IsUUID, IsOptional, IsUrl, IsArray, ArrayMinSize } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -12,9 +12,23 @@ export class CreateSignDto {
   @IsUUID()
   categoryId: string;
 
-  @ApiProperty({ example: 'uuid-da-configuracao-de-mao' })
-  @IsUUID()
-  handConfigId: string;
+  @ApiProperty({
+    example: ['uuid-da-config-1', 'uuid-da-config-2'],
+    description: 'Configurações de mão que compõem o sinal (ao menos uma). Array ou string separada por vírgula.',
+    isArray: true,
+    type: String,
+  })
+  @IsArray()
+  @ArrayMinSize(1, { message: 'Selecione ao menos uma configuração de mão.' })
+  @IsUUID('4', { each: true })
+  @Transform(({ value }) => {
+    if (Array.isArray(value)) return value.filter(Boolean);
+    if (typeof value === 'string') {
+      return value.split(',').map((v: string) => v.trim()).filter(Boolean);
+    }
+    return [];
+  })
+  handConfigIds: string[];
 
   @ApiPropertyOptional({
     example: ['uuid-da-turma-1', 'uuid-da-turma-2'],

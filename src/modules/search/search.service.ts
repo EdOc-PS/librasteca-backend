@@ -31,16 +31,17 @@ export class SearchService {
   async findRelatedSigns(userId: string, signId: string) {
     const base = await this.searchRepository.findSignBasics(signId);
     if (!base) throw new NotFoundException('Sinal não encontrado');
+    const baseConfigIds = base.handConfigs.map((h) => h.id);
 
     const candidates = await this.searchRepository.findRelatedCandidates(
       userId,
       signId,
-      base.handConfigId,
+      baseConfigIds,
       base.categoryId,
     );
 
     const relevance = (candidate: (typeof candidates)[number]) => {
-      const sameConfig = candidate.handConfig?.id === base.handConfigId;
+      const sameConfig = candidate.handConfigs.some((h) => baseConfigIds.includes(h.id));
       const sameCategory = candidate.categoryId === base.categoryId;
       if (sameConfig && sameCategory) return 3;
       if (sameConfig) return 2;

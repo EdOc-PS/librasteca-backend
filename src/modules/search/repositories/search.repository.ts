@@ -20,7 +20,7 @@ const signCardSelect = {
   anotherUrl: true,
   createdAt: true,
   category: { select: { id: true, name: true, value: true } },
-  handConfig: { select: { id: true, name: true, imgUrl: true } },
+  handConfigs: { select: { id: true, name: true, imgUrl: true } },
   classrooms: { select: { id: true, name: true } },
 };
 
@@ -47,7 +47,7 @@ export class SearchRepository {
           { tags: { has: search } },
         ],
       }),
-      ...(handConfigId && { handConfigId: { in: splitIds(handConfigId) } }),
+      ...(handConfigId && { handConfigs: { some: { id: { in: splitIds(handConfigId) } } } }),
       ...(categoryId && { categoryId: { in: splitIds(categoryId) } }),
       ...(glossaryDisciplineId && { glossaryDisciplines: { some: { id: { in: splitIds(glossaryDisciplineId) } } } }),
     };
@@ -81,7 +81,7 @@ export class SearchRepository {
   async findSignBasics(signId: string) {
     return this.prisma.sign.findUnique({
       where: { id: signId },
-      select: { handConfigId: true, categoryId: true },
+      select: { categoryId: true, handConfigs: { select: { id: true } } },
     });
   }
 
@@ -90,14 +90,14 @@ export class SearchRepository {
   async findRelatedCandidates(
     userId: string,
     signId: string,
-    handConfigId: string,
+    handConfigIds: string[],
     categoryId: string,
   ) {
     return this.prisma.sign.findMany({
       where: {
         id: { not: signId },
         classrooms: { some: this.accessibleDisciplineFilter(userId) },
-        OR: [{ handConfigId }, { categoryId }],
+        OR: [{ handConfigs: { some: { id: { in: handConfigIds } } } }, { categoryId }],
       },
       select: signCardSelect,
       orderBy: { name: 'asc' },

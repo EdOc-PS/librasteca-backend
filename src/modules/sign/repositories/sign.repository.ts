@@ -6,7 +6,7 @@ interface CreateSignData {
   name: string;
   slug: string;
   categoryId: string;
-  handConfigId: string;
+  handConfigIds: string[];
   creatorId: string;
   classroomIds?: string[];
   institutionId?: string | null;
@@ -22,7 +22,7 @@ interface CreateSignData {
 interface UpdateSignData {
   name?: string;
   categoryId?: string;
-  handConfigId?: string;
+  handConfigIds?: string[];
   classroomIds?: string[];
   videoUrl?: string | null;
   anotherUrl?: string | null;
@@ -50,7 +50,6 @@ const signSelect = {
   id: true,
   name: true,
   slug: true,
-  handConfigId: true,
   categoryId: true,
   videoUrl: true,
   anotherUrl: true,
@@ -65,7 +64,7 @@ const signSelect = {
   createdAt: true,
   updatedAt: true,
   category: { select: { id: true, name: true, value: true } },
-  handConfig: { select: { id: true, name: true, imgUrl: true } },
+  handConfigs: { select: { id: true, name: true, imgUrl: true } },
   classrooms: { select: { id: true, name: true } },
   glossaryDisciplines: { select: { id: true, name: true } },
 };
@@ -75,11 +74,12 @@ export class SignRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: CreateSignData) {
-    const { classroomIds, ...rest } = data;
+    const { classroomIds, handConfigIds, ...rest } = data;
     return this.prisma.sign.create({
       data: {
         ...rest,
         tags: data.tags ?? [],
+        handConfigs: { connect: handConfigIds.map((id) => ({ id })) },
         ...(classroomIds && classroomIds.length > 0
           ? { classrooms: { connect: classroomIds.map((id) => ({ id })) } }
           : {}),
@@ -95,7 +95,7 @@ export class SignRepository {
       where: {
         ...(search && { name: { contains: search, mode: 'insensitive' } }),
         ...(categoryId && { categoryId: { in: splitIds(categoryId) } }),
-        ...(handConfigId && { handConfigId: { in: splitIds(handConfigId) } }),
+        ...(handConfigId && { handConfigs: { some: { id: { in: splitIds(handConfigId) } } } }),
         ...(glossaryDisciplineId && { glossaryDisciplines: { some: { id: { in: splitIds(glossaryDisciplineId) } } } }),
         ...(tag && { tags: { has: tag } }),
       },
@@ -131,11 +131,15 @@ export class SignRepository {
   }
 
   async update(id: string, data: UpdateSignData) {
-    const { classroomIds, ...rest } = data;
+    const { classroomIds, handConfigIds, ...rest } = data;
     return this.prisma.sign.update({
       where: { id },
       data: {
         ...rest,
+        // Se handConfigIds veio, substitui o conjunto inteiro (set)
+        ...(handConfigIds !== undefined
+          ? { handConfigs: { set: handConfigIds.map((hid) => ({ id: hid })) } }
+          : {}),
         // Se classroomIds veio, substitui o conjunto inteiro (set)
         ...(classroomIds !== undefined
           ? { classrooms: { set: classroomIds.map((did) => ({ id: did })) } }
@@ -259,7 +263,7 @@ export class SignRepository {
         globalStatus: GlobalStatus.PUBLIC,
         ...(search && { name: { contains: search, mode: 'insensitive' } }),
         ...(categoryId && { categoryId: { in: splitIds(categoryId) } }),
-        ...(handConfigId && { handConfigId: { in: splitIds(handConfigId) } }),
+        ...(handConfigId && { handConfigs: { some: { id: { in: splitIds(handConfigId) } } } }),
         ...(glossaryDisciplineId && { glossaryDisciplines: { some: { id: { in: splitIds(glossaryDisciplineId) } } } }),
         ...(tag && { tags: { has: tag } }),
       },

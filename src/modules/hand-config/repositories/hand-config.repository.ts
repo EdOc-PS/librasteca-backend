@@ -78,7 +78,7 @@ export class HandConfigRepository {
   }
 
   async countSigns(id: string) {
-    return this.prisma.sign.count({ where: { handConfigId: id } });
+    return this.prisma.sign.count({ where: { handConfigs: { some: { id } } } });
   }
 
   async delete(id: string) {
